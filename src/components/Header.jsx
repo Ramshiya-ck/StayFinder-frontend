@@ -26,7 +26,7 @@ export const Header = () => {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
-          <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Rooms</a>
+          <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
           <a href="#hotel" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</a>
           <a href="#contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
         </nav>
@@ -58,6 +58,7 @@ export const Header = () => {
           </a>
 
           {/* Profile */}
+          
           <button
             type="button"
             className="hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm ring-1 ring-black/5 transition hover:text-gray-900 md:inline-flex"
