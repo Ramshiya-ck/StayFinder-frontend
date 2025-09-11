@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { axiosinstance } from "../config/axiosinstance";
-import { Link } from "react-router-dom";
+import { Link, Links } from "react-router-dom";
 
 const HotelList = () => {
   const [hotels, setHotels] = useState([]);
@@ -121,10 +121,11 @@ const HotelList = () => {
                 >
                   View Details →
                 </Link>
-                <button className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-emerald-700 transition">
+                {/* <button className="rounded-xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-emerald-700 transition">
                   Book Now
-                </button>
+                </button> */}
               </div>
+              
             </div>
 
             <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-emerald-500/0 via-green-500/0 to-emerald-500/0 group-hover:from-emerald-500/5 group-hover:via-green-500/5 group-hover:to-emerald-500/5 transition-all duration-500 pointer-events-none"></div>

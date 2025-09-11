@@ -10,6 +10,7 @@ import { Register } from "../pages/Register";
 import { Login } from "../pages/Login";
 import HotelList from "../pages/Hotel";
 import { About } from "../pages/about";
+import { Singlehotel } from "../pages/singlehotel";
 
   export const router = createBrowserRouter([
     {
@@ -48,6 +49,10 @@ import { About } from "../pages/about";
         {
           path:"about",
           element:<About />
+        },
+        {
+          path:"singlehotel",
+          element:<Singlehotel />
         }
       ]
     },
