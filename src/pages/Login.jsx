@@ -2,7 +2,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { axiosinstance } from '../config/axiosinstance'
-import { FcGoogle } from "react-icons/fc"  // Google icon
+import { FcGoogle } from "react-icons/fc"
+import background from '/images/background.jpeg' // make sure image exists in public/images or src/images
 
 export const Login = () => {
     const {
@@ -22,20 +23,23 @@ export const Login = () => {
     }
 
     const handleGoogleLogin = () => {
-        // 👉 later you can integrate with Django social-auth or Firebase
         console.log("Google login clicked")
     }
 
     return (
         <div
-            className="flex justify-center items-center min-h-screen bg-gradient-to-br from-emerald-600 via-teal-500 to-emerald-400 relative overflow-hidden"
+            className="flex justify-center items-center min-h-screen bg-center bg-cover relative overflow-hidden"
+            style={{ backgroundImage: `url(${background})` }}
         >
+            {/* Overlay for premium dim effect */}
+            <div className="absolute inset-0 bg-black/50"></div>
+
             {/* Decorative Circles */}
             <div className="absolute -top-20 -left-20 w-72 h-72 bg-white/10 rounded-full blur-3xl"></div>
             <div className="absolute bottom-0 right-0 w-80 h-80 bg-black/10 rounded-full blur-3xl"></div>
 
             {/* Glassmorphism Card */}
-            <div className="relative w-full max-w-md bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/30">
+            <div className="relative z-10 w-full max-w-md bg-white/20 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/30">
                 <h2 className="text-3xl font-bold text-center mb-6 text-white drop-shadow">
                     Welcome Back 👋
                 </h2>

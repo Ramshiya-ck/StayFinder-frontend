@@ -1,18 +1,38 @@
-import React from 'react'
-import hotel4 from '/images/slider3.jpg'
+import React, { useEffect } from 'react'
+// import hotel4 from '/images/slider3.jpg'
+import { axiosinstance } from '../config/axiosinstance'
+import { useParams } from 'react-router-dom'
 
 export const Singlehotel = () => {
+    const {id} = useParams()
+    const token = localStorage.getItem("token")
+    console.log(token)
+   
+    useEffect(()=>{
+        const getSingleHotel = async ()=>{
+            try {
+                const response = await axiosinstance.get(`ccustomer/single/hotel/${id}/`,{
+                    headers:{
+                        Authorization: `Bearer ${token}`
+                    }
+                })
+                console.log(response)
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        getSingleHotel()
+    },[])
+
+    
+
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
         
         {/* Hotel Image */}
         <div className="h-80 w-full">
-          <img 
-            src= {hotel4} 
-            alt="Hotel" 
-            className="w-full h-full object-cover"
-          />
+          
         </div>
 
         {/* Hotel Content */}
@@ -73,5 +93,6 @@ export const Singlehotel = () => {
         </div>
       </div>
     </div>
+  
   )
 }

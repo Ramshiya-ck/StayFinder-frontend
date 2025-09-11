@@ -51,7 +51,7 @@ import { Singlehotel } from "../pages/singlehotel";
           element:<About />
         },
         {
-          path:"singlehotel",
+          path:"singlehotel/:id/",
           element:<Singlehotel />
         }
       ]
