@@ -12,8 +12,10 @@ export const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-        const response = await axiosinstance.post("register/", data)
-        console.log(response)
+        const response = await axiosinstance.post("customer/register/", data)
+       const tokenreg = response.data.data
+       localStorage.setItem("token",tokenreg)
+       console.log(tokenreg)
     } catch (error) {
         console.log(error)
     }

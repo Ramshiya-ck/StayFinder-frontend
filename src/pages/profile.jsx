@@ -15,7 +15,7 @@ export const Profile = () => {
   // Fetch profile data on mount
   useEffect(() => {
     const fetchProfile = async () => {
-      const response = await axiosinstance.get("profile/");
+      const response = await axiosinstance.get("customer/profile/");
       setProfile(response.data);
       setLoading(false);
     };

@@ -14,7 +14,7 @@ export const Home = () => {
   useEffect(() => {
     const getSlider = async () => {
       try {
-        const response = await axiosinstance.get('slider/')
+        const response = await axiosinstance.get('customer/slider/')
         setSlider(response.data.data)   // <-- API data
       } catch (error) {
         console.log(error)

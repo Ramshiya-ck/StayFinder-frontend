@@ -10,7 +10,7 @@ const HotelList = () => {
   useEffect(() => {
     const getHotels = async () => {
       try {
-        const response = await axiosinstance.get("hotel/");
+        const response = await axiosinstance.get("customer/hotel/");
         setHotels(response.data.data); // ✅ store backend data
       } catch (error) {
       }
@@ -22,7 +22,7 @@ const HotelList = () => {
     const getSearch = async (query) => {
      
         try {
-            const response = await axiosinstance.get(`hotel/search/?location=${query}`)
+            const response = await axiosinstance.get(`customer/hotel/search/?location=${query}`)
             setHotels(response.data.data)
 
             
