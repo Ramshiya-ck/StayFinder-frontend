@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Ratinghotel } from './Ratinghotel'
 import { Category } from './Category'
 import { axiosinstance } from '../config/axiosinstance'
+import { About } from './about'
 
 export const Home = () => {
   const [slider, setSlider] = useState([])
@@ -128,7 +129,8 @@ export const Home = () => {
       </div>
 
       <div><Ratinghotel /></div>
-      <div><Category /></div>
+
+      <div><About /></div>
     </div>
   )
 }

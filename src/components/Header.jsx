@@ -105,7 +105,7 @@ export const Header = () => {
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </a>
-            <a href="#hotel" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
+            <a  onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
               <span>Hotel</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

@@ -7,6 +7,9 @@ import { Ratinghotel } from "../pages/Ratinghotel";
 import { Category } from "../pages/Category";
 import { Profile } from "../pages/profile";
 import { Register } from "../pages/Register";
+import { Login } from "../pages/Login";
+import HotelList from "../pages/Hotel";
+import { About } from "../pages/about";
 
   export const router = createBrowserRouter([
     {
@@ -25,6 +28,10 @@ import { Register } from "../pages/Register";
           path: "register",
           element: <Register />
         },
+        {
+          path: "login",
+          element: <Login />
+        },
 
         {
           path:"tophotel",
@@ -33,6 +40,14 @@ import { Register } from "../pages/Register";
         {
           path:"category",
           element: <Category />
+        },
+        {
+          path:"hotelpage",
+          element:<HotelList />
+        },
+        {
+          path:"about",
+          element:<About />
         }
       ]
     },

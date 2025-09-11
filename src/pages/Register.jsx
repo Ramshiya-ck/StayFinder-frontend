@@ -1,5 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import { Link } from 'react-router-dom'
+import { axiosinstance } from '../config/axiosinstance'
 
 export const Register = () => {
   const {
@@ -8,8 +10,13 @@ export const Register = () => {
     formState: { errors }
   } = useForm()
 
-  const onSubmit = (data) => {
-    console.log('Register form data:', data)
+  const onSubmit = async (data) => {
+    try {
+        const response = await axiosinstance.post("register/", data)
+        console.log(response)
+    } catch (error) {
+        console.log(error)
+    }
   }
 
   return (
@@ -70,7 +77,7 @@ export const Register = () => {
               type="password"
               {...register('password', {
                 required: 'Password is required',
-                minLength: { value: 6, message: 'Password must be at least 6 characters' }
+                minLength: { value: 4, message: 'Password must be at least 4 characters' }
               })}
               className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
             />
@@ -86,6 +93,12 @@ export const Register = () => {
           >
             Register
           </button>
+        <Link to='/login'><p className="mt-4 text-center text-sm text-gray-600">
+          Don’t have an account?{' '}
+          <a  className="text-emerald-600 hover:underline font-medium">
+            Login
+          </a>
+        </p></Link>
         </form>
       </div>
     </div>

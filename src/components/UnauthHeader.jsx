@@ -26,7 +26,7 @@ export const UnauthHeader = () => {
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
           <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
-          <a href="#hotel" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</a>
+          <Link to='hotelpage'><a  className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</a></Link>
           <a href="#contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
         </nav>
 
@@ -44,7 +44,7 @@ export const UnauthHeader = () => {
 
           {/* Join Us (instead of Profile) */}
           <Link
-            to="/register"
+            to="/login"
             className="hidden rounded-full border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 md:inline-flex"
           >
             Join Us
