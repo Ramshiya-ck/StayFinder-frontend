@@ -10,7 +10,7 @@ const HotelList = () => {
   useEffect(() => {
     const getHotels = async () => {
       try {
-        const response = await axiosinstance.get("customer/hotel/");
+        const response = await axiosinstance.get("hotel/hotel/");
         setHotels(response.data.data); // ✅ store backend data
       } catch (error) {
       }
@@ -22,7 +22,7 @@ const HotelList = () => {
     const getSearch = async (query) => {
      
         try {
-            const response = await axiosinstance.get(`customer/hotel/search/?location=${query}`)
+            const response = await axiosinstance.get(`hotel/hotel/search/?location=${query}`)
             setHotels(response.data.data)
 
             
@@ -105,7 +105,7 @@ const HotelList = () => {
             </div>
             <div className="flex flex-wrap gap-2 mb-5">
               {hotel.amenities &&
-                hotel.amenities.split(",").slice(0, 3).map((a, i) => (
+                hotel.amenities.split(",").slice(0, 10).map((a, i) => (
                   <span
                     key={i}
                     className="px-3 py-1 text-xs bg-emerald-50 text-emerald-700 rounded-full border border-emerald-200 font-medium"

@@ -1,98 +1,88 @@
-import React, { useEffect } from 'react'
-// import hotel4 from '/images/slider3.jpg'
+import React, { useEffect, useState } from 'react'
 import { axiosinstance } from '../config/axiosinstance'
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 
 export const Singlehotel = () => {
-    const {id} = useParams()
+    const [singlehotel, setSinglehotel] = useState('')
+    const { id } = useParams()
     const token = localStorage.getItem("token")
-    console.log(token)
-   
-    useEffect(()=>{
-        const getSingleHotel = async ()=>{
+    console.log(singlehotel.image)
+
+    useEffect(() => {
+        const getSingleHotel = async () => {
             try {
-                const response = await axiosinstance.get(`ccustomer/single/hotel/${id}/`,{
-                    headers:{
+                const response = await axiosinstance.get(`hotel/single/hotel/${id}/`, {
+                    headers: {
                         Authorization: `Bearer ${token}`
                     }
                 })
                 console.log(response)
+                setSinglehotel(response.data.data.hotel)
             } catch (error) {
                 console.log(error)
             }
         }
         getSingleHotel()
-    },[])
+    }, [])
 
-    
 
-  return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
-        
-        {/* Hotel Image */}
-        <div className="h-80 w-full">
-          
-        </div>
 
-        {/* Hotel Content */}
-        <div className="p-6 space-y-4">
-          {/* Title + Price */}
-          <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-800">The Grand Paradise Hotel</h1>
-            <span className="text-xl font-semibold text-emerald-600">$250 / night</span>
-          </div>
+    return (
+        <div className="min-h-screen bg-gray-50 p-6">
+            <div className="max-w-5xl mx-auto bg-white rounded-2xl shadow-lg overflow-hidden">
 
-          {/* Location */}
-          <p className="text-gray-500 text-sm">📍 123 Beach Avenue, Miami, USA</p>
+                {/* Hotel Image */}
+                <div className="h-80 w-full">
+                    <img
+                        src={singlehotel?.image}
+                        alt="Hotel"
+                        className="w-full h-full object-cover"
+                    />
+                </div>
 
-          {/* Description */}
-          <p className="text-gray-700 leading-relaxed">
-            Experience ultimate luxury and comfort at The Grand Paradise Hotel.
-            Located on the pristine shores of Miami Beach, this 5-star property 
-            offers breathtaking ocean views, modern rooms, and world-class amenities. 
-            Whether you're here for leisure or business, we ensure a memorable stay.
-          </p>
+                {/* Hotel Content */}
+                <div className="p-6 space-y-4">
+                    {/* Title + Price */}
+                    <div className="flex justify-between items-center">
+                        <h1 className="text-3xl font-bold text-gray-800">{singlehotel.hotal_name}</h1>
+                        <span className="text-xl font-semibold text-emerald-600">$250 / night</span>
+                    </div>
 
-          {/* Amenities */}
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Amenities</h2>
-            <ul className="grid grid-cols-2 gap-2 text-gray-600 text-sm">
-              <li>✔ Free WiFi</li>
-              <li>✔ Swimming Pool</li>
-              <li>✔ Spa & Wellness Center</li>
-              <li>✔ Gym & Fitness Studio</li>
-              <li>✔ 24/7 Room Service</li>
-              <li>✔ Ocean View Rooms</li>
-            </ul>
-          </div>
+                    {/* Location */}
+                    <p className="text-gray-500 text-sm">{singlehotel.location}</p>
+                    {/* Contact & Details */}
+                    <div className="space-y-2 text-gray-700 text-sm">
+                        <p><span className="font-semibold">📞 Phone:</span> 871431630</p>
+                        <p><span className="font-semibold">📧 Email:</span> abc@gmail.com</p>
+                    </div>
 
-          {/* Rooms */}
-          <div>
-            <h2 className="text-lg font-semibold text-gray-800 mb-2">Room Types</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="border rounded-lg p-4 shadow-sm">
-                <h3 className="font-medium text-gray-700">Deluxe Room</h3>
-                <p className="text-sm text-gray-500">King-size bed, balcony view</p>
-                <p className="text-emerald-600 font-semibold mt-1">$180 / night</p>
-              </div>
-              <div className="border rounded-lg p-4 shadow-sm">
-                <h3 className="font-medium text-gray-700">Suite</h3>
-                <p className="text-sm text-gray-500">2 Bedrooms, private pool</p>
-                <p className="text-emerald-600 font-semibold mt-1">$350 / night</p>
-              </div>
+                    {/* Description */}
+                    <p className="text-gray-700 leading-relaxed">
+                        {singlehotel.description}
+                    </p>
+
+                    {/* Amenities */}
+                    <div>
+                        <h2 className="text-lg font-semibold text-gray-800 mb-2">Amenities</h2>
+                        <ul className="grid grid-cols-2 gap-2 text-gray-600 text-sm">
+                            {singlehotel.amenities &&
+                                singlehotel.amenities.split(",").map((item, index) => (
+                                    <li key={index}>✔ {item.trim()}</li>
+                                ))
+                            }
+                        </ul>
+                    </div>
+                    {/* Call to Action (no <a>, just button) */}
+                    <div className="pt-4">
+                    <Link to={`/room/${id}`}>
+                        <button className="w-full md:w-auto bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:bg-emerald-700 transition">
+                            SEE ROOMS
+                        </button>
+                        </Link>
+                    </div>
+                </div>
             </div>
-          </div>
-
-          {/* Call to Action (no <a>, just button) */}
-          <div className="pt-4">
-            <button className="w-full md:w-auto bg-emerald-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:bg-emerald-700 transition">
-              Book Now
-            </button>
-          </div>
         </div>
-      </div>
-    </div>
-  
-  )
+
+    )
 }
