@@ -12,6 +12,7 @@ import HotelList from "../pages/Hotel";
 import { About } from "../pages/about";
 import { Singlehotel } from "../pages/singlehotel";
 import Room from "../pages/Room";
+import Booking from "../pages/booking";
 
   export const router = createBrowserRouter([
     {
@@ -58,6 +59,10 @@ import Room from "../pages/Room";
         {
           path:"room/:id",
           element:<Room />
+        },
+        {
+          path:"booking/",
+          element:<Booking />
         }
       ]
     },

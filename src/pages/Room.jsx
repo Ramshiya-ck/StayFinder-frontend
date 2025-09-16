@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { axiosinstance } from "../config/axiosinstance";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 export default function Room() {
   const [rooms, setRooms] = useState([]);
@@ -88,9 +88,11 @@ export default function Room() {
 
                 {/* CTA Button */}
                 <div className="pt-4">
+                    <Link to='/booking'>
                   <button className="w-full md:w-auto bg-emerald-600 text-white px-8 py-3 rounded-xl font-semibold shadow-lg hover:bg-emerald-700 hover:scale-105 transition-transform">
                     Book Now
                   </button>
+                  </Link>
                 </div>
               </div>
             </div>
