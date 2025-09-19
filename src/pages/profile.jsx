@@ -1,134 +1,182 @@
 import React, { useEffect, useState } from "react";
 import { axiosinstance } from "../config/axiosinstance";
 
-export const Profile = () => {
-  const [profile, setProfile] = useState({
+const Profile = () => {
+  const [profileData, setProfileData] = useState({
+    customer: "",
     phone: "",
     address: "",
-    nationality: "",
-    id_proof: "",
-    profile_image: null,
+    city: "",
+    country: "",
+    profile_image: "",
   });
 
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fetch profile data on mount
+  // You will need to get the token from local storage or context
+  const token = localStorage.getItem("token");
+
   useEffect(() => {
     const fetchProfile = async () => {
-      const response = await axiosinstance.get("customer/profile/");
-      setProfile(response.data);
-      setLoading(false);
+      try {
+        const response = await axiosinstance.get('customer/profile/', )
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
+        if (response.data.data && response.data.data.length > 0) {
+        //   Assuming your API returns an array, we take the first object
+          setProfileData(response.data.data[0]);
+        }
+        setIsLoading(false);
+      } catch (error) {
+
+        console.error(error);
+      }
     };
+
     fetchProfile();
-  }, []);
+  }, [token]);
 
   // Handle input changes
   const handleChange = (e) => {
-    setProfile({
-      ...profile,
-      [e.target.name]: e.target.value,
-    });
+    const { name, value } = e.target;
+    setProfileData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
 
-  // Handle file upload
-  const handleFileChange = (e) => {
-    setProfile({
-      ...profile,
-      profile_image: e.target.files[0],
-    });
-  };
-
-  // Update profile
-  const handleSubmit = async (e) => {
+  // Handle form submission
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("phone", profile.phone);
-    formData.append("address", profile.address);
-    formData.append("nationality", profile.nationality);
-    formData.append("id_proof", profile.id_proof);
-    if (profile.profile_image instanceof File) {
-      formData.append("profile_image", profile.profile_image);
-    }
-
-    await axiosinstance.put("profile/update/", formData, {
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    alert("Profile updated successfully ✅");
+    // You would add your API call here to update the profile data
+    console.log("Profile data submitted:", profileData);
+    // Example: axiosinstance.put('/profile/update', profileData, { headers: { Authorization: `Bearer ${token}` }})
   };
 
-  if (loading) return <p className="text-center">Loading...</p>;
+  if (isLoading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 mt-10">{error}</div>;
+  }
 
   return (
-    <div className="max-w-2xl mx-auto bg-white shadow-lg rounded-2xl p-6 mt-10">
-      <h2 className="text-2xl font-bold mb-6 text-center">My Profile</h2>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl">
+        <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">User Profile</h2>
+        
+        <form onSubmit={handleSubmit}>
+          {/* Profile Image Section */}
+          <div className="flex flex-col items-center mb-6">
+            <div className="relative w-32 h-32 rounded-full overflow-hidden border-4 border-emerald-500">
+              {profileData.profile_image ? (
+                <img
+                  src={profileData.profile_image}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full bg-gray-200 text-gray-500 text-sm">
+                  No Image
+                </div>
+              )}
+            </div>
+            <label className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-full cursor-pointer hover:bg-emerald-600 transition">
+              Upload Photo
+              <input
+                type="file"
+                name="profile_image"
+                className="hidden"
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+          
+          {/* Form Fields Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Customer Name */}
+            <div>
+              <label htmlFor="customer" className="block text-sm font-medium text-gray-700">Customer Name</label>
+              <input
+                type="text"
+                name="customer"
+                id="customer"
+                value={profileData.customer}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
+            
+            {/* Phone */}
+            <div>
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-700">Phone</label>
+              <input
+                type="tel"
+                name="phone"
+                id="phone"
+                value={profileData.phone}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        {/* Profile Image */}
-        <div className="flex flex-col items-center">
-          {profile.profile_image ? (
-            <img
-              src={
-                profile.profile_image instanceof File
-                  ? URL.createObjectURL(profile.profile_image)
-                  : profile.profile_image
-              }
-              alt="Profile"
-              className="w-24 h-24 rounded-full object-cover mb-2"
-            />
-          ) : (
-            <div className="w-24 h-24 rounded-full bg-gray-200 mb-2"></div>
-          )}
-          <input type="file" onChange={handleFileChange} />
-        </div>
+            {/* Address */}
+            <div className="md:col-span-2">
+              <label htmlFor="address" className="block text-sm font-medium text-gray-700">Address</label>
+              <input
+                type="text"
+                name="address"
+                id="address"
+                value={profileData.address}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
+            
+            {/* City */}
+            <div>
+              <label htmlFor="city" className="block text-sm font-medium text-gray-700">City</label>
+              <input
+                type="text"
+                name="city"
+                id="city"
+                value={profileData.city}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
 
-        {/* Phone */}
-        <input
-          type="text"
-          name="phone"
-          value={profile.phone || ""}
-          onChange={handleChange}
-          placeholder="Phone"
-          className="w-full border rounded-lg px-3 py-2"
-        />
-
-        {/* Address */}
-        <textarea
-          name="address"
-          value={profile.address || ""}
-          onChange={handleChange}
-          placeholder="Address"
-          className="w-full border rounded-lg px-3 py-2"
-        />
-
-        {/* ID Proof */}
-        <input
-          type="text"
-          name="id_proof"
-          value={profile.id_proof || ""}
-          onChange={handleChange}
-          placeholder="ID Proof (Passport / Aadhaar / etc.)"
-          className="w-full border rounded-lg px-3 py-2"
-        />
-
-        {/* Nationality */}
-        <input
-          type="text"
-          name="nationality"
-          value={profile.nationality || ""}
-          onChange={handleChange}
-          placeholder="Nationality"
-          className="w-full border rounded-lg px-3 py-2"
-        />
-
-        {/* Save Button */}
-        <button
-          type="submit"
-          className="w-full bg-emerald-600 text-white py-2 rounded-lg hover:bg-emerald-700 transition"
-        >
-          Save Changes
-        </button>
-      </form>
+            {/* Country */}
+            <div>
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700">Country</label>
+              <input
+                type="text"
+                name="country"
+                id="country"
+                value={profileData.country}
+                onChange={handleChange}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+              />
+            </div>
+          </div>
+          
+          {/* Submit Button */}
+          <div className="mt-8 text-center">
+            <button
+              type="submit"
+              className="w-full md:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+            >
+              Update Profile
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
+
+export default Profile;

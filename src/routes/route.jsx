@@ -5,7 +5,7 @@ import { UserLayout } from "../layouts/UserLayout";
 import { Home } from "../pages/Home";
 import { Ratinghotel } from "../pages/Ratinghotel";
 import { Category } from "../pages/Category";
-import { Profile } from "../pages/profile";
+import  Profile  from "../pages/profile"
 import { Register } from "../pages/Register";
 import { Login } from "../pages/Login";
 import HotelList from "../pages/Hotel";
@@ -61,8 +61,12 @@ import Booking from "../pages/booking";
           element:<Room />
         },
         {
-          path:"booking/",
+          path:"booking/:id/:room_id",
           element:<Booking />
+        },
+        {
+          path:'profile',
+          element:< Profile />
         }
       ]
     },
