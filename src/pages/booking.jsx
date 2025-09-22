@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useParams } from "react-router-dom";
 import { axiosinstance } from "../config/axiosinstance";
@@ -10,6 +10,8 @@ import slider4 from "/images/slider4.png";
 
 export default function Booking() {
   const { id, room_id } = useParams();
+  const [booking,setBooking] = useState("")
+console.log(booking)
 
   const {
     register,
@@ -50,7 +52,7 @@ export default function Booking() {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        console.log("Bookings:", response.data);
+        setBooking(response.data.data[0]);
       } catch (error) {
         console.log(error);
       }
@@ -58,20 +60,22 @@ export default function Booking() {
     fetchBookings();
   }, [id, room_id]);
 
+  const token = localStorage.getItem("token");
+  console.log(token)
+
   // ✅ submit handler
   const onSubmit = async (data) => {
     try {
       console.log("Form Data Submitted:", data);
 
-      const token = localStorage.getItem("token");
-      const response = await axiosinstance.post("booking/create/", data, {
+      
+      const response = await axiosinstance.post("booking/create/checkout/session/", data,id, room_id, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Booking Created:", response.data);
+      setBooking(response.data.data);
       alert("Booking confirmed!");
     } catch (error) {
       console.log("Booking failed:", error);
-      alert("Failed to confirm booking.");
     }
   };
 
@@ -199,6 +203,7 @@ export default function Booking() {
                 Total Amount
               </label>
               <input
+              value={booking.total_amount}
                 type="number"
                 {...register("total_amount")}
                 className="w-full rounded-xl border px-4 py-3"
@@ -209,6 +214,7 @@ export default function Booking() {
                 Advance Amount
               </label>
               <input
+              value={booking.advance_amount}
                 type="number"
                 {...register("advance_amount")}
                 className="w-full rounded-xl border px-4 py-3"
@@ -219,6 +225,7 @@ export default function Booking() {
                 Balance Amount
               </label>
               <input
+              value={booking.balance_amount}
                 type="number"
                 {...register("balance_amount")}
                 readOnly
@@ -229,33 +236,9 @@ export default function Booking() {
 
           {/* Booking Status & Payment Status */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Booking Status
-              </label>
-              <select
-                {...register("booking_status")}
-                className="w-full rounded-xl border px-4 py-3 focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Payment Status
-              </label>
-              <select
-                {...register("payment_status")}
-                className="w-full rounded-xl border px-4 py-3 focus:ring-2 focus:ring-emerald-500"
-              >
-                <option value="pending">Pending</option>
-                <option value="paid">Paid</option>
-                <option value="failed">Failed</option>
-              </select>
-            </div>
+
+
+
           </div>
 
           {/* Submit */}

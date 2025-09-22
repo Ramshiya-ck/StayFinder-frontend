@@ -13,6 +13,7 @@ import { About } from "../pages/about";
 import { Singlehotel } from "../pages/singlehotel";
 import Room from "../pages/Room";
 import Booking from "../pages/booking";
+import PaymentSuccess from "../pages/payment_success";
 
   export const router = createBrowserRouter([
     {
@@ -67,6 +68,11 @@ import Booking from "../pages/booking";
         {
           path:'profile',
           element:< Profile />
+        },
+        {
+          path:'/payment/success',
+          element:< PaymentSuccess />
+
         }
       ]
     },
