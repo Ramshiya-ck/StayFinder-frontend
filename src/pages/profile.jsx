@@ -20,7 +20,11 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const response = await axiosinstance.get('customer/profile/', )
+        const response = await axiosinstance.get('customer/profile/',{
+            headers:{
+                Authorization: `Bearer ${token}`
+            }
+        } )
         //   headers: {
         //     Authorization: `Bearer ${token}`,
         //   },
@@ -30,6 +34,7 @@ const Profile = () => {
           setProfileData(response.data.data[0]);
         }
         setIsLoading(false);
+        console.log(response)
       } catch (error) {
 
         console.error(error);

@@ -6,7 +6,7 @@ export const Singlehotel = () => {
     const [singlehotel, setSinglehotel] = useState('')
     const { id } = useParams()
     const token = localStorage.getItem("token")
-    console.log(singlehotel.image)
+    
 
     useEffect(() => {
         const getSingleHotel = async () => {
@@ -45,15 +45,15 @@ export const Singlehotel = () => {
                     {/* Title + Price */}
                     <div className="flex justify-between items-center">
                         <h1 className="text-3xl font-bold text-gray-800">{singlehotel.hotal_name}</h1>
-                        <span className="text-xl font-semibold text-emerald-600">$250 / night</span>
+                        {/* <span className="text-xl font-semibold text-emerald-600">$250 / night</span> */}
                     </div>
 
                     {/* Location */}
                     <p className="text-gray-500 text-sm">{singlehotel.location}</p>
                     {/* Contact & Details */}
                     <div className="space-y-2 text-gray-700 text-sm">
-                        <p><span className="font-semibold">📞 Phone:</span> 871431630</p>
-                        <p><span className="font-semibold">📧 Email:</span> abc@gmail.com</p>
+                        <p><span className="font-semibold">📞 Phone:</span>{singlehotel.phone}</p>
+                        <p><span className="font-semibold">📧 Email:</span> {singlehotel.email}</p>
                     </div>
 
                     {/* Description */}

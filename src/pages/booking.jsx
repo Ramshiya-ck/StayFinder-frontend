@@ -10,8 +10,7 @@ import slider4 from "/images/slider4.png";
 
 export default function Booking() {
   const { id, room_id } = useParams();
-  const [booking,setBooking] = useState("")
-console.log(booking)
+  const [booking, setBooking] = useState("");
 
   const {
     register,
@@ -41,7 +40,7 @@ console.log(booking)
     setValue("balance_amount", total - advance);
   }, [total, advance, setValue]);
 
-  // fetch bookings list
+  // fetch bookings list (pre-fill amounts if available)
   useEffect(() => {
     const token = localStorage.getItem("token");
     const fetchBookings = async () => {
@@ -52,7 +51,9 @@ console.log(booking)
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setBooking(response.data.data[0]);
+        if (response.data.data.length > 0) {
+          setBooking(response.data.data[0]);
+        }
       } catch (error) {
         console.log(error);
       }
@@ -61,21 +62,51 @@ console.log(booking)
   }, [id, room_id]);
 
   const token = localStorage.getItem("token");
-  console.log(token)
 
   // ✅ submit handler
   const onSubmit = async (data) => {
     try {
       console.log("Form Data Submitted:", data);
 
-      
-      const response = await axiosinstance.post("booking/create/checkout/session/", data,id, room_id, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBooking(response.data.data);
-      alert("Booking confirmed!");
+      // Step 1: Create booking
+      const bookingResponse = await axiosinstance.post(
+        "booking/booking/create/",
+        {
+          hotel: id,
+          room: room_id,
+          check_in: data.check_in,
+          check_out: data.check_out,
+          guests: data.guests,
+          address: data.address,
+          phone: data.phone,
+          total_amount: data.total_amount,
+          advance_amount: data.advance_amount,
+          balance_amount: data.balance_amount,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const bookingId = bookingResponse.data.data.id;
+      console.log("Booking created:", bookingId);
+
+      // Step 2: Create checkout session
+      const sessionResponse = await axiosinstance.post(
+        "booking/create/checkout/session/",
+        { booking_id: bookingId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log("Checkout Session:", sessionResponse.data);
+
+      // Step 3: Redirect to Stripe Checkout
+      if (sessionResponse.data?.checkout_url) {
+        window.location.href = sessionResponse.data.checkout_url;
+      } else {
+        alert("Failed to create checkout session.");
+      }
     } catch (error) {
-      console.log("Booking failed:", error);
+      console.log("Error:", error.response?.data || error.message);
+      alert("Booking or payment session failed.");
     }
   };
 
@@ -203,7 +234,7 @@ console.log(booking)
                 Total Amount
               </label>
               <input
-              value={booking.total_amount}
+                value={booking.total_amount}
                 type="number"
                 {...register("total_amount")}
                 className="w-full rounded-xl border px-4 py-3"
@@ -214,7 +245,7 @@ console.log(booking)
                 Advance Amount
               </label>
               <input
-              value={booking.advance_amount}
+                value={booking.advance_amount}
                 type="number"
                 {...register("advance_amount")}
                 className="w-full rounded-xl border px-4 py-3"
@@ -225,20 +256,13 @@ console.log(booking)
                 Balance Amount
               </label>
               <input
-              value={booking.balance_amount}
+                value={booking.balance_amount}
                 type="number"
                 {...register("balance_amount")}
                 readOnly
                 className="w-full rounded-xl border px-4 py-3 bg-gray-100 cursor-not-allowed"
               />
             </div>
-          </div>
-
-          {/* Booking Status & Payment Status */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-
-
-
           </div>
 
           {/* Submit */}
