@@ -14,6 +14,7 @@ import { Singlehotel } from "../pages/singlehotel";
 import Room from "../pages/Room";
 import Booking from "../pages/booking";
 import PaymentSuccess from "../pages/payment_success";
+import BookingCard from "../pages/my_booking";
 
   export const router = createBrowserRouter([
     {
@@ -73,6 +74,10 @@ import PaymentSuccess from "../pages/payment_success";
           path:'/payment/success',
           element:< PaymentSuccess />
 
+        },
+        {
+          path: "my-bookings/:booking_id",
+          element: <BookingCard />
         }
       ]
     },

@@ -1,11 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { axiosinstance } from '../config/axiosinstance'
 import { FcGoogle } from "react-icons/fc"
 import background from '/images/background.jpeg' // make sure image exists in public/images or src/images
+import { AuthContext } from '../components/AuthHook/Authcontext'
 
 export const Login = () => {
+const {login } = useContext(AuthContext)
+
+    const navigate = useNavigate()
+
     const {
         register,
         handleSubmit,
@@ -15,8 +20,10 @@ export const Login = () => {
     const onSubmit = async (data) => {
         try {
             const response = await axiosinstance.post('customer/login/', data)
+            console.log(response)
             const token = response.data.data.access
-            localStorage.setItem("token", token)
+            login(token)
+            navigate('/')
         } catch (error) {
             console.log(error)
         }

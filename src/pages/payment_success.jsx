@@ -1,14 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { axiosinstance } from "../config/axiosinstance";
 
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const session_id = searchParams.get("session_id"); // ✅ grab from query string
   const token = localStorage.getItem("token");
+  console.log(token)
   const [booking, setBooking] = useState(null);
   const navigate = useNavigate();
+
+  
 
   useEffect(() => {
     const getPaymentSuccess = async () => {
@@ -21,7 +24,7 @@ export default function PaymentSuccess() {
             },
           }
         );
-        console.log(response.data);
+        console.log(response);
         setBooking(response.data.data); // ✅ store the booking object
       } catch (error) {
         console.log(error);
@@ -57,14 +60,15 @@ export default function PaymentSuccess() {
             </div>
           </div>
         )}
-
+        <Link to={`/my-bookings/${booking?.id}/`} >
         <button
           type="button"
-          onClick={() => navigate("/my-bookings")}
+         
           className="mt-8 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
           Go to My Bookings
         </button>
+        </Link>
       </div>
     </div>
   );

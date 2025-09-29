@@ -1,8 +1,16 @@
-import React, { useState } from 'react'
-import { Link, Links } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AuthContext } from './AuthHook/Authcontext';
+import axios from 'axios';
+import { axiosinstance } from '../config/axiosinstance';
 
 export const UnauthHeader = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isAuthenticated } = useContext(AuthContext)
+
+
+
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-white/70 backdrop-blur-xl">
@@ -26,41 +34,37 @@ export const UnauthHeader = () => {
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
           <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
-          <Link to='hotelpage'><a className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</a></Link>
+          <Link to="/hotelpage" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</Link>
           <a href="#contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
         </nav>
 
         {/* Actions */}
         <div className="flex items-center gap-2 md:gap-3">
-        <Link to='/profile'>
-          <a
-            href="#profile"
-            className="hidden items-center gap-2 rounded-full bg-gradient-to-r from-green-600 to-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition hover:shadow-blue-500/30 md:inline-flex"
-          >
-            {/* Profile/User Icon */}
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="16"
-              height="16"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-              aria-hidden="true"
+          {isAuthenticated ? (
+            <Link
+              to="/profile"
+              className="hidden items-center gap-2 rounded-full bg-gradient-to-r from-green-600 to-green-600 px-4 py-2 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition hover:shadow-blue-500/30 md:inline-flex"
             >
-              <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12Zm0 2c-3.2 0-9.5 1.6-9.5 4.9V22h19v-3.1c0-3.3-6.3-4.9-9.5-4.9Z" />
-            </svg>
-
-            Profile
-          </a>
-          </Link>
-
-
-          {/* Join Us (instead of Profile) */}
-          <Link
-            to="/login"
-            className="hidden rounded-full border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 md:inline-flex"
-          >
-            Join Us
-          </Link>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path d="M12 12c2.7 0 4.9-2.2 4.9-4.9S14.7 2.2 12 2.2 7.1 4.4 7.1 7.1 9.3 12 12 12Zm0 2c-3.2 0-9.5 1.6-9.5 4.9V22h19v-3.1c0-3.3-6.3-4.9-9.5-4.9Z" />
+              </svg>
+              Profile
+            </Link>
+          ) : (
+            <Link
+              to="/login"
+              className="hidden rounded-full border border-emerald-600 px-4 py-2 text-sm font-medium text-emerald-700 transition hover:bg-emerald-50 md:inline-flex"
+            >
+              Join Us
+            </Link>
+          )}
 
           {/* Mobile menu button */}
           <button
@@ -82,5 +86,5 @@ export const UnauthHeader = () => {
         </div>
       </div>
     </header>
-  )
-}
+  );
+};
