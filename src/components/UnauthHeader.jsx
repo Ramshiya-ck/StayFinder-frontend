@@ -33,9 +33,9 @@ export const UnauthHeader = () => {
         {/* Desktop nav */}
         <nav className="hidden items-center gap-8 md:flex">
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
-          <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
+          <a href="/images" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
           <Link to="/hotelpage" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</Link>
-          <a href="#contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
+          <a href="/contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
         </nav>
 
         {/* Actions */}

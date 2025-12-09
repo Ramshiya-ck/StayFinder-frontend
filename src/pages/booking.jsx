@@ -11,6 +11,9 @@ import slider4 from "/images/slider4.png";
 export default function Booking() {
   const { id, room_id } = useParams();
   const [booking, setBooking] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [roomData, setRoomData] = useState(null);
 
   const {
     register,
@@ -37,35 +40,61 @@ export default function Booking() {
   const total = watch("total_amount");
   const advance = watch("advance_amount");
   useEffect(() => {
-    setValue("balance_amount", total - advance);
+    const totalNum = parseFloat(total) || 0;
+    const advanceNum = parseFloat(advance) || 0;
+    setValue("balance_amount", totalNum - advanceNum);
   }, [total, advance, setValue]);
 
-  // fetch bookings list (pre-fill amounts if available)
+  // fetch room details to get pricing
   useEffect(() => {
     const token = localStorage.getItem("token");
-    const fetchBookings = async () => {
+    const fetchRoomData = async () => {
       try {
+        // Fetch all rooms for this hotel
         const response = await axiosinstance.get(
-          `booking/booking/list/${id}/${room_id}/`,
+          `room/rooms/${id}/`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        if (response.data.data.length > 0) {
-          setBooking(response.data.data[0]);
+        
+        // Find the specific room by room_id
+        const rooms = response.data.data;
+        const room = rooms.find(r => r.id === parseInt(room_id));
+        
+        if (room) {
+          setRoomData(room);
+          
+          // Set the pricing in the form
+          if (room.price) {
+            const totalPrice = parseFloat(room.price);
+            const advancePrice = totalPrice * 0.3; // 30% advance
+            const balancePrice = totalPrice * 0.7; // 70% balance
+            
+            setValue("total_amount", totalPrice.toFixed(2));
+            setValue("advance_amount", advancePrice.toFixed(2));
+            setValue("balance_amount", balancePrice.toFixed(2));
+          }
+        } else {
+          setErrorMessage("Room not found.");
         }
       } catch (error) {
-        console.log(error);
+        console.log("Error fetching room data:", error);
+        setErrorMessage("Unable to load room pricing. Please refresh the page.");
       }
     };
-    fetchBookings();
-  }, [id, room_id]);
+    fetchRoomData();
+  }, [id, room_id, setValue]);
 
   const token = localStorage.getItem("token");
 
   // ✅ submit handler
   const onSubmit = async (data) => {
     try {
+      // Clear previous messages
+      setErrorMessage("");
+      setSuccessMessage("");
+      
       console.log("Form Data Submitted:", data);
 
       // Step 1: Create booking
@@ -100,13 +129,28 @@ export default function Booking() {
 
       // Step 3: Redirect to Stripe Checkout
       if (sessionResponse.data?.checkout_url) {
-        window.location.href = sessionResponse.data.checkout_url;
+        setSuccessMessage("Booking created! Redirecting to payment...");
+        setTimeout(() => {
+          window.location.href = sessionResponse.data.checkout_url;
+        }, 1000);
       } else {
-        alert("Failed to create checkout session.");
+        setErrorMessage("Failed to create checkout session. Please try again.");
       }
     } catch (error) {
       console.log("Error:", error.response?.data || error.message);
-      alert("Booking or payment session failed.");
+      
+      // Handle specific error from backend
+      const backendError = error.response?.data;
+      if (backendError?.message) {
+        setErrorMessage(backendError.message);
+      } else if (backendError?.detail) {
+        setErrorMessage(backendError.detail);
+      } else {
+        setErrorMessage("Booking failed. Please check your information and try again.");
+      }
+      
+      // Scroll to top to show error
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -160,7 +204,56 @@ export default function Booking() {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white/90 backdrop-blur rounded-3xl shadow-xl ring-1 ring-gray-900/5 p-6 sm:p-8 space-y-8"
         >
-          <h2 className="text-2xl font-bold text-gray-800">Book Your Stay</h2>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Book Your Stay</h2>
+            {roomData && (
+              <div className="mt-2 text-sm text-gray-600">
+                <p className="font-medium text-emerald-600">{roomData.room_type}</p>
+                <p className="text-lg font-semibold text-gray-800">${roomData.price} / night</p>
+              </div>
+            )}
+          </div>
+
+          {/* Error Message */}
+          {errorMessage && (
+            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-red-800">{errorMessage}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setErrorMessage("")}
+                  className="ml-auto text-red-500 hover:text-red-700"
+                >
+                  <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Success Message */}
+          {successMessage && (
+            <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm font-medium text-green-800">{successMessage}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Dates & Guests */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
@@ -234,30 +327,36 @@ export default function Booking() {
                 Total Amount
               </label>
               <input
-                value={booking.total_amount}
                 type="number"
-                {...register("total_amount")}
-                className="w-full rounded-xl border px-4 py-3"
+                step="0.01"
+                {...register("total_amount", { required: true, min: 0 })}
+                className="w-full rounded-xl border px-4 py-3 focus:ring-2 focus:ring-emerald-500"
               />
+              {errors.total_amount && (
+                <p className="text-red-500 text-sm">Total amount is required</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Advance Amount
               </label>
               <input
-                value={booking.advance_amount}
                 type="number"
-                {...register("advance_amount")}
-                className="w-full rounded-xl border px-4 py-3"
+                step="0.01"
+                {...register("advance_amount", { required: true, min: 0 })}
+                className="w-full rounded-xl border px-4 py-3 focus:ring-2 focus:ring-emerald-500"
               />
+              {errors.advance_amount && (
+                <p className="text-red-500 text-sm">Advance amount is required</p>
+              )}
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Balance Amount
               </label>
               <input
-                value={booking.balance_amount}
                 type="number"
+                step="0.01"
                 {...register("balance_amount")}
                 readOnly
                 className="w-full rounded-xl border px-4 py-3 bg-gray-100 cursor-not-allowed"

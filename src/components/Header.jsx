@@ -95,7 +95,7 @@ export const Header = () => {
       {isMenuOpen && (
         <div className="border-t border-gray-100 bg-white/90 px-4 pb-6 pt-2 shadow-lg md:hidden">
           <div className="mt-2 grid gap-1">
-            <Link to="/" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
+            <Link to="/images" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
               <span>Home</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>

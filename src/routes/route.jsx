@@ -15,6 +15,8 @@ import Room from "../pages/Room";
 import Booking from "../pages/booking";
 import PaymentSuccess from "../pages/payment_success";
 import BookingCard from "../pages/my_booking";
+import { Image } from "../pages/image";
+import Contact from "../pages/contact";
 
   export const router = createBrowserRouter([
     {
@@ -78,6 +80,14 @@ import BookingCard from "../pages/my_booking";
         {
           path: "my-bookings/:booking_id",
           element: <BookingCard />
+        },
+        {
+          path:"images",
+          element:<Image /> 
+        },
+        {
+          path:"contact",
+          element:<Contact />
         }
       ]
     },

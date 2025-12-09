@@ -73,19 +73,66 @@ const Profile = () => {
 
     // Handle input changes
     const handleChange = (e) => {
-        const { name, value } = e.target;
-        setProfileData((prevData) => ({
-            ...prevData,
-            [name]: value,
-        }));
+        const { name, value, files } = e.target;
+        
+        // Handle file inputs differently
+        if (name === 'profile_image' && files && files[0]) {
+            const file = files[0];
+            
+            // Create a preview URL for the image
+            const previewUrl = URL.createObjectURL(file);
+            
+            setProfileData((prevData) => ({
+                ...prevData,
+                [name]: previewUrl, // Show preview
+                fileObject: file    // Store actual file for upload
+            }));
+        } else {
+            // Handle regular text inputs
+            setProfileData((prevData) => ({
+                ...prevData,
+                [name]: value,
+            }));
+        }
     };
 
     // Handle form submission
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        // You would add your API call here to update the profile data
-        console.log("Profile data submitted:", profileData);
-        // Example: axiosinstance.put('/profile/update', profileData, { headers: { Authorization: `Bearer ${token}` }})
+        
+        try {
+            const formData = new FormData();
+            
+            // Append text fields
+            Object.keys(profileData).forEach(key => {
+                if (key !== 'profile_image' && key !== 'fileObject') {
+                    formData.append(key, profileData[key]);
+                }
+            });
+            
+            // Append file if exists
+            if (profileData.fileObject) {
+                formData.append('profile_image', profileData.fileObject);
+            }
+            
+            // Send to backend
+            const response = await axiosinstance.put(
+                'customer/profile/', 
+                formData,
+                {
+                    headers: { 
+                        'Content-Type': 'multipart/form-data',
+                        Authorization: `Bearer ${token}`
+                    }
+                }
+            );
+            
+            console.log("Profile updated:", response.data);
+            alert("Profile updated successfully!");
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            alert("Failed to update profile.");
+        }
     };
 
     if (isLoading) {
@@ -122,10 +169,12 @@ const Profile = () => {
                             <input
                                 type="file"
                                 name="profile_image"
+                                accept="image/*"
                                 className="hidden"
                                 onChange={handleChange}
                             />
                         </label>
+                        <p className="text-xs text-gray-500 mt-2">Click to select a profile image</p>
                     </div>
 
                     {/* Form Fields Section */}

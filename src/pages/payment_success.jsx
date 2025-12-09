@@ -33,6 +33,13 @@ export default function PaymentSuccess() {
     if (session_id) getPaymentSuccess();
   }, [session_id, token]);
 
+  useEffect(() => {
+    const timer = setTimeout(() =>{
+        navigate("/")
+    },3000)
+    return () => clearTimeout(timer)
+  },[navigate])
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
       <div className="bg-white shadow-xl rounded-2xl max-w-md w-full p-8 text-center">
@@ -63,10 +70,11 @@ export default function PaymentSuccess() {
         <Link to={`/my-bookings/${booking?.id}/`} >
         <button
           type="button"
+          onClick={() => navigate('/')}
          
           className="mt-8 w-full bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors"
         >
-          Go to My Bookings
+          Go to Home
         </button>
         </Link>
       </div>
