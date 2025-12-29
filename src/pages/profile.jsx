@@ -12,13 +12,14 @@ const Profile = () => {
         profile_image: "",
     });
 
+    const [profileId, setProfileId] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate()
 
 
     // You will need to get the token from local storage or context
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("token") || localStorage.getItem("access");
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -28,22 +29,33 @@ const Profile = () => {
                         Authorization: `Bearer ${token}`
                     }
                 })
-                //   headers: {
-                //     Authorization: `Bearer ${token}`,
-                //   },
-                // });
                 if (response.data.data && response.data.data.length > 0) {
                     //   Assuming your API returns an array, we take the first object
-                    setProfileData(response.data.data[0]);
+                    const profile = response.data.data[0];
+                    setProfileId(profile.id);
+                    // Construct full URL for profile image if it's a relative path
+                    if (profile.profile_image && !profile.profile_image.startsWith('http')) {
+                        profile.profile_image = `http://127.0.0.1:8000${profile.profile_image}`;
+                    }
+                    setProfileData(profile);
+                } else {
+                    // No profile exists, set loading to false
+                    setError("No profile found. Please create one.");
                 }
                 setIsLoading(false);
                 console.log(response)
             } catch (error) {
-
                 console.error(error);
+                setError("Failed to load profile. Please try again.");
+                setIsLoading(false);
             }
         };
-        fetchProfile();
+        if (token) {
+            fetchProfile();
+        } else {
+            setError("Please login to view your profile");
+            setIsLoading(false);
+        }
     }, [token]);
     const handleLogout = async () => {
         try {
@@ -60,12 +72,19 @@ const Profile = () => {
             }
           );
       
+          // Clear all tokens from localStorage
           localStorage.removeItem("access");
           localStorage.removeItem("refresh");
+          localStorage.removeItem("token");
       
           navigate("/login");
         } catch (error) {
           console.log(error);
+          // Even if logout API fails, clear local storage and redirect
+          localStorage.removeItem("access");
+          localStorage.removeItem("refresh");
+          localStorage.removeItem("token");
+          navigate("/login");
         }
       };
 
@@ -105,7 +124,7 @@ const Profile = () => {
             
             // Append text fields
             Object.keys(profileData).forEach(key => {
-                if (key !== 'profile_image' && key !== 'fileObject') {
+                if (key !== 'profile_image' && key !== 'fileObject' && key !== 'id' && key !== 'customer_email' && key !== 'customer_name' && key !== 'is_default') {
                     formData.append(key, profileData[key]);
                 }
             });
@@ -115,23 +134,43 @@ const Profile = () => {
                 formData.append('profile_image', profileData.fileObject);
             }
             
-            // Send to backend
-            const response = await axiosinstance.put(
-                'customer/profile/', 
-                formData,
-                {
-                    headers: { 
-                        'Content-Type': 'multipart/form-data',
-                        Authorization: `Bearer ${token}`
+            let response;
+            if (profileId) {
+                // Update existing profile
+                response = await axiosinstance.put(
+                    `customer/profile/${profileId}/update/`, 
+                    formData,
+                    {
+                        headers: { 
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${token}`
+                        }
                     }
+                );
+            } else {
+                // Create new profile
+                response = await axiosinstance.post(
+                    'customer/profile/create/', 
+                    formData,
+                    {
+                        headers: { 
+                            'Content-Type': 'multipart/form-data',
+                            Authorization: `Bearer ${token}`
+                        }
+                    }
+                );
+                if (response.data.data && response.data.data.id) {
+                    setProfileId(response.data.data.id);
                 }
-            );
+            }
             
-            console.log("Profile updated:", response.data);
-            alert("Profile updated successfully!");
+            console.log("Profile saved:", response.data);
+            alert("Profile saved successfully!");
+            // Reload profile data
+            window.location.reload();
         } catch (error) {
-            console.error("Error updating profile:", error);
-            alert("Failed to update profile.");
+            console.error("Error saving profile:", error);
+            alert("Failed to save profile. Please check the console for details.");
         }
     };
 
@@ -179,16 +218,16 @@ const Profile = () => {
 
                     {/* Form Fields Section */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {/* Customer Name */}
+                        {/* Customer Name - Read Only */}
                         <div>
-                            <label htmlFor="customer" className="block text-sm font-medium text-gray-700">Customer Name</label>
+                            <label htmlFor="customer_name" className="block text-sm font-medium text-gray-700">Customer Name</label>
                             <input
                                 type="text"
-                                name="customer"
-                                id="customer"
-                                value={profileData.customer}
-                                onChange={handleChange}
-                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-emerald-500 focus:border-emerald-500"
+                                name="customer_name"
+                                id="customer_name"
+                                value={profileData.customer_name || profileData.customer || ""}
+                                readOnly
+                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed"
                             />
                         </div>
 
@@ -253,16 +292,19 @@ const Profile = () => {
                         >
                             Update Profile
                         </button>
-
                     </div>
-                    <div>              
-                        <button
+                </form>
+
+                {/* Logout Button - Outside form */}
+                <div className="mt-6 text-center">
+                    <button
+                        type="button"
                         onClick={handleLogout}
-                        className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                        className="px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition"
                     >
                         Logout
-                    </button></div>
-                </form>
+                    </button>
+                </div>
             </div>
         </div>
     );

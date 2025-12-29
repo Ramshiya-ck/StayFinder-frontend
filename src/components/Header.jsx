@@ -1,10 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { axiosinstance } from '../config/axiosinstance'
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [profileImage, setProfileImage] = useState(null)
 
-  
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      try {
+        const token = localStorage.getItem("token") || localStorage.getItem("access");
+        if (token) {
+          const response = await axiosinstance.get('customer/profile/', {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          if (response.data.data && response.data.data.length > 0) {
+            const profile = response.data.data[0];
+            if (profile.profile_image) {
+              // Construct full URL for profile image if it's a relative path
+              let imageUrl = profile.profile_image;
+              if (!imageUrl.startsWith('http')) {
+                imageUrl = `http://127.0.0.1:8000${imageUrl}`;
+              }
+              setProfileImage(imageUrl);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching profile image:", error);
+      }
+    };
+    fetchProfileImage();
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-white/70 backdrop-blur-xl">
@@ -30,7 +59,7 @@ export const Header = () => {
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
           <a href="#rooms" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
           <a href="#hotel" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</a>
-          <a href="#contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
+          <Link to="/contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</Link>
         </nav>
 
         {/* Actions */}
@@ -60,16 +89,23 @@ export const Header = () => {
           </a>
 
           {/* Profile */}
-
-          <button
-            type="button"
-            className="hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm ring-1 ring-black/5 transition hover:text-gray-900 md:inline-flex"
-            aria-label="User"
+          <Link
+            to="/profile"
+            className="hidden h-9 w-9 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-sm ring-1 ring-black/5 transition hover:text-gray-900 overflow-hidden md:inline-flex"
+            aria-label="User Profile"
           >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-              <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14Z" fill="currentColor"/>
-            </svg>
-          </button>
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm0 2c-5 0-9 2.5-9 5.5V22h18v-2.5C21 16.5 17 14 12 14Z" fill="currentColor"/>
+              </svg>
+            )}
+          </Link>
 
           {/* Mobile menu button */}
           <button
@@ -113,12 +149,18 @@ export const Header = () => {
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </a>
-            <a href="#contact" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
+            <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
               <span>Contact</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
                 <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-            </a>
+            </Link>
+            <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between rounded-md px-2 py-3 text-gray-800 hover:bg-gray-50">
+              <span>Profile</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+                <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </Link>
           </div>
 
           <div className="mt-4 flex items-center justify-between rounded-xl border border-gray-200 bg-white px-3 py-3 shadow-sm">

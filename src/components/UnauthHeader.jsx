@@ -35,7 +35,7 @@ export const UnauthHeader = () => {
           <Link to="/" className="text-sm text-gray-700 transition hover:text-gray-900">Home</Link>
           <a href="/images" className="text-sm text-gray-700 transition hover:text-gray-900">Gallery</a>
           <Link to="/hotelpage" className="text-sm text-gray-700 transition hover:text-gray-900">Hotel</Link>
-          <a href="/contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</a>
+          <Link to="/contact" className="text-sm text-gray-700 transition hover:text-gray-900">Contact</Link>
         </nav>
 
         {/* Actions */}

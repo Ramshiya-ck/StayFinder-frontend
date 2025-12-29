@@ -200,13 +200,18 @@ export default function Contact() {
             </div>
 
             <div className="rounded-xl overflow-hidden shadow-sm">
-              {/* Placeholder map - replace with actual map iframe when integrating */}
-              <div className="w-full h-44 bg-gradient-to-br from-emerald-200/40 to-white flex items-center justify-center">
-                <div className="text-center text-sm text-emerald-700">
-                  <div className="font-semibold">Map placeholder</div>
-                  <div className="text-xs text-slate-600">Add your Google Maps iframe here</div>
-                </div>
-              </div>
+              {/* Google Maps Embed - Marine Drive, Kochi, Kerala */}
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.123456789!2d76.2673!3d9.9312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b0873e2c8b5c5d5%3A0x8b5c5d5c5d5c5d5c!2sMarine%20Drive%2C%20Kochi%2C%20Kerala%20682016!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                width="100%"
+                height="300"
+                style={{ border: 0 }}
+                allowFullScreen=""
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-44"
+                title="Hotel Location Map - Marine Drive, Kochi"
+              ></iframe>
             </div>
 
             <div className="rounded-xl bg-white p-4">
